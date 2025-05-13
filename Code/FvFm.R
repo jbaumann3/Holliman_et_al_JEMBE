@@ -250,22 +250,31 @@ strip<-strip_themed(text_y=element_text(color='white'),background_y= list(elemen
 
 
 
-newfvfmgraph<-ggplot(predlm2, aes(x = x, y = predicted, colour = group)) +
-  geom_jitter(data=pam, aes(x=week, y=meanfvfm, color=treatment_temp), width=0.1,alpha=0.3)+
-  geom_ribbon(aes(ymin=conf.low, ymax=conf.high),alpha=0.05)+
-  geom_line(linewidth=1.3) +
-  facet_grid2(facet~., strip=strip)+
-  theme_classic(base_size = 13)+
-  ylab("Fv/Fm")+
-  xlab("Week")+
-  scale_color_manual(values=c("#2166ac","#92c5de", "#f4a582", "#b2182b"), labels=c("18" = "18.7", "22" = "22.4","28" = "28.0", "32" = "31.5"))+
-  labs(color = "Treatment (°C)")+
-  theme(text=element_text(size=16))
+#newfvfmgraph<-ggplot(predlm2, aes(x = x, y = predicted, colour = group)) +
+  #geom_jitter(data=pam, aes(x=week, y=meanfvfm, color=treatment_temp), width=0.1,alpha=0.25, size=2)+
+  #geom_ribbon(aes(ymin=conf.low, ymax=conf.high),alpha=0.1)+
+  #geom_line(linewidth=1.4) +
+  #facet_grid2(facet~., strip=strip)+
+  #theme_classic(base_size = 13)+
+  #labs(y=expression(F[v]/F[m]), x=expression(Week))+
+  #scale_color_manual(values=c("#2166ac","#92c5de", "#f4a582", "#b2182b"))+
+  #labs(color = "Treatment (°C)")+
+  #theme(text=element_text(size=16))
 
-newfvfmgraph
+#newfvfmgraph
 
+newfvfmgraph2 <- ggplot(predlm2, aes(x = x, y = predicted, colour = group)) +
+  geom_jitter(data = pam, aes(x = week, y = meanfvfm, color = treatment_temp), width = 0.15, alpha = 0.2, size = 1.5, show.legend = FALSE)+
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = group), alpha = 0.2, color = NA, show.legend = FALSE)+
+  geom_line(linewidth = 1.2)+
+  facet_grid2(facet ~ ., strip = strip)+
+  theme_classic(base_size = 14)+
+  labs(y = expression(F[v]/F[m]), x = "Week", color = "Treatment (°C)")+
+  scale_color_manual(values = c("#2166ac", "#92c5de", "#f4a582", "#b2182b"))+
+  scale_fill_manual(values = c("#2166ac", "#92c5de", "#f4a582", "#b2182b"))+
+  theme(text = element_text(size = 16), strip.text = element_text(face = "bold"), panel.spacing = unit(1, "lines"))
 
-  
+newfvfmgraph2
 
 
 #95% CI coef plot

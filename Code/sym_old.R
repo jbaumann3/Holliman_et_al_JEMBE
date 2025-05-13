@@ -3,10 +3,7 @@
 # DATA ANALYSIS
 # Symbiont Density
 
-# Last Updated: 4/18/25
-##note that there was an error in scaling / dilution factor in the original submission. 
-#Authors confused the volume of a single small square on the hemocytometer with the volume of a larger square (0.00025ul per smallest square. We counted 16 of these per sample, for a volume of 0.004ul)
-#code has been updated with this fix
+# Last Updated: 6/4/23
 
 #################### GETTING STARTED ####################
 
@@ -18,20 +15,24 @@ library(dplyr)
 # Load in data
 sym <- read.csv("sym_count.csv")
 
-options(scipen=0)
+####JUSTIN ADDED 4/18/2025
+## FIXING some old numbers
+#new hemo vol col
+sym$new_hemo <- 0.1
 
-#New columns to calculate 
-sym$total_sym_number = sym$mean_sym*(sym$total_solution_volume_ul/sym$hemo_vol_ul)
+## and calculating the new (correct?) symbiont density
+sym$calc_symb <- sym$mean_sym * (sym$total_solution_volume_ul / sym$new_hemo)
+#######
 
-sym
 # Create new columns
-sym$sym_sci <- sym$total_sym_number / 1000000
+sym$total_sym <- sym$total_sym_number*10
+sym$sym_sci <- sym$total_sym / 1000000
 
 # Make new dfs
-sym_exp <- sym[c(25:108), c(1,2,7,14,15)]
+sym_exp <- sym[c(25:108), c(1,2,7,17)]
 # delete MAH (outlier) from sym
 sym_exp <- sym_exp[-c(56),]
-sym_T0 <- sym[c(1:24),c(1,2,7,14,15)]
+sym_T0 <- sym[c(1:24),c(1,2,7,17)]
 
 sym_exp$population <- ifelse(grepl("NC", sym_exp$coral_ID), "NC", 
                              ifelse(grepl("MA", sym_exp$coral_ID), "MA","RI"))
@@ -93,7 +94,7 @@ sym_end <- sym[-c(1:24),]
 
 ggplot(bleach_end, aes(x=treatment_temp, y=mean, color=population)) + 
   geom_point(size=3, position=pd)+
-  geom_point(data=sym_end, aes(x=treatment_temp, y=sym_sci, color=population), size=3, alpha=0.2, position=pd)+
+  #geom_point(data=sym_end, aes(x=treatment_temp, y=sym_sci, color=population), size=3, alpha=0.2, position=pd)+
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=0.2, position=pd)+
   theme_classic(base_size = 12)+
   ylab("Symbiont Density (10^6 cells / cm^2)")+

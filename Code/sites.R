@@ -33,7 +33,7 @@ gps$site <- factor(gps$site, levels = c("MA", "RI", "NC"))
 map<-ggplot()+
   geom_polygon(data=us, aes(x=long, y=lat, group= group), fill='gray70', color='black')+
   coord_fixed(xlim=c(-78,-68),ylim=c(34,44), ratio = 1)+
-  theme_bw(base_size = 12)+
+  theme_bw(base_size = 13)+
   geom_point(data=gps, aes(x=long, y=lat, color=site), position=pd, size=5)+
   ylab("Latitude")+
   xlab("Longitude")+
@@ -129,3 +129,57 @@ ggplot(noaa_stats, aes(x=MM, y=mean, color=site))+
   ylab("Mean SST (°C)")+
   xlab("")+
   labs(color="Site")
+
+ggplot(filter(noaa_stats, MM %in% c("June", "July", "August", "September")),
+       aes(x = MM, y = mean, color = site))+
+  geom_errorbar(aes(x=MM, ymin=mean-5*se, ymax=mean+5*se), width=0.2)+
+  geom_point(size=3)+
+  geom_line(aes(group=site))+
+  scale_x_discrete(guide = guide_axis(angle = 45))+
+  scale_color_manual(values=c("purple4","cyan4", "goldenrod"))+
+  theme_classic(base_size = 13)+
+  ylab("Mean SST (°C)")+
+  xlab("")+
+  labs(color="Site")
+
+ggplot(filter(noaa, MM %in% c("June", "July", "August", "September")),
+       aes(x = MM, y = mean, color = site))+
+  geom_errorbar(aes(x=MM, ymin=mean-5*se, ymax=mean+5*se), width=0.2)+
+  geom_point(size=3)+
+  geom_line(aes(group=site))+
+  scale_x_discrete(guide = guide_axis(angle = 45))+
+  scale_color_manual(values=c("purple4","cyan4", "goldenrod"))+
+  theme_classic(base_size = 13)+
+  ylab("Mean SST (°C)")+
+  xlab("")+
+  labs(color="Site")
+
+
+## Figure with raw data 
+noaa$time <- as.POSIXct(noaa$time, format="%Y-%m-%d %H:%M:%S")
+noaa2 <- noaa %>%
+  filter(time >= as.POSIXct("2020-06-01 00:00:00") & time <= as.POSIXct("2020-10-01 00:00:00"))
+
+noaa2$year <- "2020"
+
+noaa3 <- noaa %>%
+  filter(time >= as.POSIXct("2021-06-01 00:00:00") & time <= as.POSIXct("2021-10-01 00:00:00"))
+
+noaa3$year <- "2021"
+
+combined_noaa <- rbind(noaa2, noaa3)
+combined_noaa$time <- format(as.POSIXct(combined_noaa$time, format="%m-%d %H:%M:%S"), "%m-%d %H:%M:%S")
+combined_noaa$time <- as.POSIXct(combined_noaa$time, format="%m-%d %H:%M:%S")
+
+combined_noaa$site <- factor(combined_noaa$site, levels = c("MA", "RI", "NC"))
+
+
+ggplot(combined_noaa, aes(x=time, y=WTMP, color=site))+
+  geom_line(width=5)+
+  scale_color_manual(values=c("purple4","cyan4", "goldenrod"))+
+  theme_classic(base_size = 13)+
+  ylab("Sea Surface Temperature (°C)")+
+  xlab("")+
+  labs(color="Site")+
+  facet_wrap(~ year)+
+  scale_x_datetime(date_labels = "%b")

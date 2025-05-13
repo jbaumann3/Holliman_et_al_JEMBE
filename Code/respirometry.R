@@ -421,22 +421,92 @@ rft_sum4<- rft_4 %>%
   summarize(mean=mean(rate), sd=sd(rate), n=n(), se=sd/sqrt(n))
 
 rft_gross <- ggplot()+
-  geom_point(aes(x=treatment_temp, y=mean, color=population, shape=light_treatment), rft_sum4, size=3)+
-  geom_point(aes(x=treatment_temp, y=rate, color=population, shape=light_treatment), rft_4, alpha=0.2, size=3)+
-  geom_errorbar(aes(x=treatment_temp, ymin=mean-se, ymax=mean+se, color=population), rft_sum4, width=0.2)+
-  theme_classic()+
+  geom_point(aes(x=treatment_temp, y=mean, color=population, shape=light_treatment), rft_sum4, size=3, position=pd)+
+  geom_point(aes(x=treatment_temp, y=rate, color=population, shape=light_treatment), rft_4, alpha=0.2, size=3, position=pd)+
+  geom_errorbar(aes(x=treatment_temp, ymin=mean-se, ymax=mean+se, color=population), rft_sum4, width=0.2, position=pd)+
+  theme_classic(base_size=12)+
   theme(legend.text = element_text(size = 13))+
   ylab(expression(ΔDO~(umol~O[2]~g~coral^{"-1"}~mL~H[2]~O^{"-1"}~hr^{"-1"}))) +
-  xlab("Temperature Treatment (ºC)")+
+  xlab("Treatment (ºC)")+
+  labs(color="Population")+
   geom_hline(yintercept = 0, alpha=0.2, linetype="dashed")+
-  facet_grid(cols=vars(population))+
   scale_color_manual(values=c("purple4","cyan4", "goldenrod"))+
-  guides(color = FALSE)+
-  ggtitle("A - Treatment")+
+  ggtitle("A - Incubations at Treatment Temperatures")+
   scale_shape(name="Metabolic Rate", labels=c("Respiration"=expression(R[dark]), "GrossP"=expression(P[gross])))+
   ylim(-1.9,2.4)
 
 rft_gross
+
+library(ggplot2)
+
+rft_sum4$treatment_temp <- as.factor(rft_sum4$treatment_temp)
+rft_sum4$light_treatment <- as.factor(rft_sum4$light_treatment)
+
+rft_4$treatment_temp <- as.factor(rft_4$treatment_temp)
+rft_4$light_treatment <- as.factor(rft_4$light_treatment)
+
+pd=position_dodge(width=0.5)
+
+rft_gross <- ggplot() +
+  geom_point(data = rft_sum4, aes(x = treatment_temp, y = mean, color = population, shape = light_treatment), size = 3, position = pd)+
+  geom_errorbar(data = rft_sum4, aes(x = treatment_temp, ymin = mean - se, ymax = mean + se, color = population, shape = light_treatment), width = 0.3, position = pd)+
+  geom_point(data = rft_4, aes(x = treatment_temp, y = rate, color = population, shape = light_treatment), alpha = 0.2, size = 3, position = pd)+
+  theme_classic(base_size = 14)+
+  theme(
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 13),
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14))+
+  ylab(expression(Delta*DO~(mu*mol~O[2]~g~coral^{-1}~mL~H[2]*O^{-1}~hr^{-1}))) +
+  xlab("Treatment (ºC)") +
+  ggtitle("A - Incubations at Treatment Temperatures") +
+  scale_color_manual(values = c("purple4", "cyan4", "goldenrod"), name = "Population") +
+  scale_shape_manual(
+    name = "Metabolic Process",
+    labels = c("Respiration" = expression(R[dark]), "GrossP" = expression(P[gross])),
+    values = c(16, 17)
+  ) +
+  geom_hline(yintercept = 0, linetype = "dashed", alpha = 0.3) +
+  ylim(-1.9, 2.4)+
+  geom_text(aes(x = 0.77, y = -1.2, label = "Aa"), size = 3, color="black")+ 
+  geom_text(aes(x = 1.0, y = -1.2, label = "Aa"), size = 3, color="black")+
+  geom_text(aes(x = 1.23, y = -1.2, label = "Ba"), size = 3, color="black")+
+  ##
+  geom_text(aes(x = 1.77, y = -1.2, label = "Aa"), size = 3, color="black")+ 
+  geom_text(aes(x = 2.0, y = -1.2, label = "Aa"), size = 3, color="black")+
+  geom_text(aes(x = 2.23, y = -1.2, label = "Ba"), size = 3, color="black")+
+  ##
+  geom_text(aes(x = 2.77, y = -1.2, label = "Ab"), size = 3, color="black")+ 
+  geom_text(aes(x = 3.0, y = -1.2, label = "Ab"), size = 3, color="black")+
+  geom_text(aes(x = 3.23, y = -1.2, label = "Bb"), size = 3, color="black")+
+  ##
+  geom_text(aes(x = 3.77, y = -1.2, label = "Aab"), size = 3, color="black")+ 
+  geom_text(aes(x = 4.0, y = -1.2, label = "Aab"), size = 3, color="black")+
+  geom_text(aes(x = 4.23, y = -1.2, label = "Bab"), size = 3, color="black")+
+  ####
+  geom_text(aes(x = 0.77, y = 1.5, label = "Aa"), size = 3, color="black")+ 
+  geom_text(aes(x = 1.0, y = 1.5, label = "Aa"), size = 3, color="black")+
+  geom_text(aes(x = 1.23, y = 1.5, label = "Ba"), size = 3, color="black")+
+  ##
+  geom_text(aes(x = 1.77, y = 1.5, label = "Aa"), size = 3, color="black")+ 
+  geom_text(aes(x = 2.0, y = 1.5, label = "Aa"), size = 3, color="black")+
+  geom_text(aes(x = 2.23, y = 1.5, label = "Ba"), size = 3, color="black")+
+  ##
+  geom_text(aes(x = 2.77, y = 1.5, label = "Aa"), size = 3, color="black")+ 
+  geom_text(aes(x = 3.0, y = 1.5, label = "Aa"), size = 3, color="black")+
+  geom_text(aes(x = 3.23, y = 1.5, label = "Ba"), size = 3, color="black")+
+  ##
+  geom_text(aes(x = 3.77, y = 1.5, label = "Ab"), size = 3, color="black")+ 
+  geom_text(aes(x = 4.0, y = 1.5, label = "Ab"), size = 3, color="black")+
+  geom_text(aes(x = 4.23, y = 1.5, label = "Bb"), size = 3, color="black")+
+  theme(
+    axis.title.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank()
+  )
+
+rft_gross
+
 
 # FINAL AMBIENT
 
@@ -468,15 +538,92 @@ rfa_gross <- ggplot()+
 
 rfa_gross
 
+rfa_gross <- ggplot() +
+  geom_point(data = rfa_sum4, aes(x = treatment_temp, y = mean, color = population, shape = light_treatment), size = 3, position = pd)+
+  geom_errorbar(data = rfa_sum4, aes(x = treatment_temp, ymin = mean - se, ymax = mean + se, color = population, shape = light_treatment), width = 0.3, position = pd)+
+  geom_point(data = rfa_4, aes(x = treatment_temp, y = rate, color = population, shape = light_treatment), alpha = 0.2, size = 3, position = pd)+
+  theme_classic(base_size = 14)+
+  theme(
+    legend.text = element_text(size = 12),
+    legend.title = element_text(size = 13),
+    legend.position = "right",
+    plot.title = element_text(face = "bold", size = 14))+
+  ylab(expression(Delta*DO~(mu*mol~O[2]~g~coral^{-1}~mL~H[2]*O^{-1}~hr^{-1}))) +
+  xlab("Treatment (ºC)") +
+  ggtitle("B - Incubations at Recovery Temperature") +
+  scale_color_manual(values = c("purple4", "cyan4", "goldenrod"), name = "Population") +
+  scale_shape_manual(
+    name = "Metabolic Process",
+    labels = c("Respiration" = expression(R[dark]), "GrossP" = expression(P[gross])),
+    values = c(16, 17)
+  ) +
+  geom_hline(yintercept = 0, linetype = "dashed", alpha = 0.3) +
+  ylim(-1.9, 2.4)+
+  geom_text(aes(x = 0.77, y = 1.5, label = "Aab"), size = 3, color="black")+ 
+  geom_text(aes(x = 1.0, y = 1.5, label = "Aab"), size = 3, color="black")+
+  geom_text(aes(x = 1.23, y = 1.5, label = "Bab"), size = 3, color="black")+
+  ##
+  geom_text(aes(x = 1.77, y = 1.5, label = "Aab"), size = 3, color="black")+ 
+  geom_text(aes(x = 2.0, y = 1.5, label = "Aab"), size = 3, color="black")+
+  geom_text(aes(x = 2.23, y = 1.5, label = "Bab"), size = 3, color="black")+
+  ##
+  geom_text(aes(x = 2.77, y = 1.5, label = "Aa"), size = 3, color="black")+ 
+  geom_text(aes(x = 3.0, y = 1.5, label = "Aa"), size = 3, color="black")+
+  geom_text(aes(x = 3.23, y = 1.5, label = "Ba"), size = 3, color="black")+
+  ##
+  geom_text(aes(x = 3.77, y = 1.5, label = "Ab"), size = 3, color="black")+ 
+  geom_text(aes(x = 4.0, y = 1.5, label = "Ab"), size = 3, color="black")+
+  geom_text(aes(x = 4.23, y = 1.5, label = "Bb"), size = 3, color="black")+
+  ####
+  geom_text(aes(x = 0.77, y = -1.2, label = "Aa"), size = 3, color="black")+ 
+  geom_text(aes(x = 1.0, y = -1.2, label = "Aa"), size = 3, color="black")+
+  geom_text(aes(x = 1.23, y = -1.2, label = "Aa"), size = 3, color="black")+
+  ##
+  geom_text(aes(x = 1.77, y = -1.2, label = "Aa"), size = 3, color="black")+ 
+  geom_text(aes(x = 2.0, y = -1.2, label = "Aa"), size = 3, color="black")+
+  geom_text(aes(x = 2.23, y = -1.2, label = "Aa"), size = 3, color="black")+
+  ##
+  geom_text(aes(x = 2.77, y = -1.2, label = "Aa"), size = 3, color="black")+ 
+  geom_text(aes(x = 3.0, y = -1.2, label = "Aa"), size = 3, color="black")+
+  geom_text(aes(x = 3.23, y = -1.2, label = "Aa"), size = 3, color="black")+
+  ##
+  geom_text(aes(x = 3.77, y = -1.2, label = "Aa"), size = 3, color="black")+ 
+  geom_text(aes(x = 4.0, y = -1.2, label = "Aa"), size = 3, color="black")+
+  geom_text(aes(x = 4.23, y = -1.2, label = "Aa"), size = 3, color="black")
+
+
+rfa_gross
+
 # Combine Plots
 gross_plot <- ggarrange(rft_gross, rfa_gross, nrow = 2, ncol = 1)
 gross_plot
 
 #################### STATS ####################
 
-anova_sym <- aov(sym_sci ~ treatment_temp*population, data = sym)
-summary(anova_sym)
-tukey_sym<-TukeyHSD(anova_sym)
-tukey_sym
+# TREATMENT TEMPS
 
+# Gross Photosynthesis
+anova_rftp <- aov(data=rft_2, GrossP ~ treatment_temp*population)
+summary(anova_rftp)
+tukey_rftp<-TukeyHSD(anova_rftp)
+tukey_rftp
 
+# Dark Respiration 
+anova_rftr <- aov(data=rft_2, Respiration ~ treatment_temp*population)
+summary(anova_rftr)
+tukey_rftr<-TukeyHSD(anova_rftr)
+tukey_rftr
+
+# AMBIENT TEMPS 
+
+# Gross Photosynthesis
+anova_rfap <- aov(data=rfa_2, GrossP ~ treatment_temp*population)
+summary(anova_rfap)
+tukey_rfap<-TukeyHSD(anova_rfap)
+tukey_rfap
+
+# Dark Respiration 
+anova_rfar <- aov(data=rfa_2, Respiration ~ treatment_temp*population)
+summary(anova_rfar)
+tukey_rfar<-TukeyHSD(anova_rfar)
+tukey_rfar
